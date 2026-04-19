@@ -1,0 +1,153 @@
+Ex.No:9
+Implement Clustering Algorithms
+
+Aim:
+To write a python program to implement clustering algorithm using k-means method.
+
+Procedure:
+Step 1 - Import basic libraries.
+Step 2 - Importing the dataset.
+Step 3 - Data preprocessing.
+Step 4 - Training the model using k-Means.
+Step 5 - Testing and evaluation of the model.
+Step 6 - Visualizing the model.
+
+Program:
+fromsklearn.clusterimportKMeans
+importpandasaspd
+fromsklearn.preprocessingimportMinMaxScaler
+frommatplotlibimportpyplotasplt
+%matplotlibinline
+In [2]:
+df=pd.read_csv("income.csv")
+df.head()
+Out[2]:
+Name Age Income($)
+1 Michael 29 900000 Rob 27 70000
+2 Mohan 29 61000
+ 
+Name Age Income($)
+3 Ismail 28 60000
+4 Kory 42 150000
+In [3]:
+plt.scatter(df.Age,df['Income($)'])
+plt.xlabel('Age')
+plt.ylabel('Income($)')
+Out[3]:
+Text(0, 0.5, 'Income($)')
+In [4]:
+km=KMeans(n_clusters=3)
+y_predicted=km.fit_predict(df[['Age','Income($)']])
+y_predicted
+Out[4]:
+array([0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 2])
+In [5]:
+df['cluster']=y_predicted
+ 
+df.head()
+Out[5]:
+Name Age Income($) cluster
+0 Rob 27 70000 0
+1 Michael 29 90000 0
+2 Mohan 29 61000 2
+3 Ismail 28 60000 2
+4 Kory 42 150000 1
+In [6]:
+km.cluster_centers_
+Out[6]:
+array([[3.40000000e+01, 8.05000000e+04],
+[3.82857143e+01, 1.50000000e+05],
+[3.29090909e+01, 5.61363636e+04]])
+In [7]:
+df1=df[df.cluster==0]
+df2=df[df.cluster==1]
+df3=df[df.cluster==2]
+plt.scatter(df1.Age,df1['Income($)'],color='green')
+plt.scatter(df2.Age,df2['Income($)'],color='red')
+plt.scatter(df3.Age,df3['Income($)'],color='black')
+plt.scatter(km.cluster_centers_[:,0],km.cluster_centers_[:,1],color='purple',marker='*',label='centroid')
+plt.xlabel('Age')
+plt.ylabel('Income ($)')
+plt.legend()
+Out[7]:
+<matplotlib.legend.Legend at 0x13943cc89d0>
+ 
+Preprocessing using min max scaler
+In [8]:
+scaler=MinMaxScaler()
+scaler.fit(df[['Income($)']])
+df['Income($)'] =scaler.transform(df[['Income($)']])
+scaler.fit(df[['Age']])
+df['Age'] =scaler.transform(df[['Age']])
+In [9]:
+df.head()
+Out[9]:
+Name Age Income($) cluster
+1 Michael 0.176471 0.384615 00 Rob 0.058824 0.213675 0
+2 Mohan 0.176471 0.136752 2
+ 
+Name Age Income($) cluster
+3 Ismail 0.117647 0.128205 2
+In [10]:
+plt.scatter(df.Age,df['Income($)'])
+Out[10]:
+<matplotlib.collections.PathCollection at 0x13943d5be20>
+In [11]:
+km=KMeans(n_clusters=3)
+y_predicted=km.fit_predict(df[['Age','Income($)']])
+y_predicted
+Out[11]:
+array([1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2])
+In [12]:
+df['cluster']=y_predicted
+df.head()
+Out[12]:4 Kory 0.941176 0.897436 1
+ 
+Name Age Income($) cluster
+0 Rob 0.058824 0.213675 1
+1 Michael0.176471 0.384615 1
+2 Mohan 0.176471 0.136752 1
+3 Ismail0.117647 0.128205 1
+4 Kory 0.941176 0.897436 0
+In [13]:
+km.cluster_centers_Out[13]:
+array([[0.72268908, 0.8974359 ],
+[0.1372549 , 0.11633428],
+[0.85294118, 0.2022792 ]])
+In [16]:
+df1=df[df.cluster==0]
+df2=df[df.cluster==1]
+df3=df[df.cluster==2]
+plt.scatter(df1.Age,df1['Income($)'],color='green')
+plt.scatter(df2.Age,df2['Income($)'],color='red')
+plt.scatter(df3.Age,df3['Income($)'],color='black')
+plt.scatter(km.cluster_centers_[:,0],km.cluster_centers_[:,1],color='purple',marker='*',label='centroid')
+plt.legend()
+Out[16]:
+<matplotlib.legend.Legend at 0x13943d23190>
+ 
+Elbow Plot
+In [17]:
+sse= []
+k_rng=range(1,10)
+forkink_rng:
+km=KMeans(n_clusters=k)
+km.fit(df[['Age','Income($)']])
+sse.append(km.inertia_)
+C:\Users\janaj\anaconda3\lib\site-packages\sklearn\cluster\_kmeans.py:881:
+UserWarning: KMeans is known to have a memory leak on Windows with MKL, when
+there are less chunks than available threads. You can avoid it by setting the
+environment variable OMP_NUM_THREADS=1.
+warnings.warn(
+In [18]:
+plt.xlabel('K')
+plt.ylabel('Sum of squared error')
+plt.plot(k_rng,sse)
+Out[18]:
+[<matplotlib.lines.Line2D at 0x13945f3d940>]
+
+Output:
+
+
+Result:
+Thus, the python program for clustering algorithm using k-means was executed successfully.

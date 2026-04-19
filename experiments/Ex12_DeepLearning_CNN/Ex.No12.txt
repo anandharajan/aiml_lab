@@ -1,0 +1,789 @@
+Ex.No:12
+Build Deep Learning Neural Network models
+
+Aim:
+To write a python program to Build deep learning neural network models.
+
+Procedure:
+Step 1 - Import basic libraries.
+Step 2 - Importing the dataset.
+Step 3 - Data preprocessing.
+ From keras library we are going to use image preprocessing task, to normalize
+the image pixel values in between 0 to 1.
+ Model is imported to load various Neural Network models such as Sequential.
+ We are going to use Stochastic Gradient Descent (SGD) as a optimizer
+ Keras layers such as Dense, Flatten, Conv2D and MaxPooling is used to
+implement the CNN model.
+Step 4 - Training the model.
+Step 5 - Testing and evaluation of the model.
+Step 6 - Visualizing the model.
+
+Program:
+Convolution Neural Networks are mainly use for large size input data such as Image data.
+ Convolution Neural Networks (CNNs) use parameter sharing.
+ Small pattern detectors called filters are used to convolve over the entire image.
+ These filters are learned through NN training in the same way as in fully connected
+networks.
+ Just like a hidden layer in a fully connected layer, convolution layers are used in CNNs.
+ To handle large size of image data, pooling layers are introduced.
+ Normalization layers were used in early CNN architectures, but due to their minimal
+impact, they are not much used in the present CNNs.
+Dataset Link : : We
+split the dataset into training validation and testing sample
+A. Data Preprocessing
+In [1]:
+importnumpyasnp
+importkeras
+ 
+fromkerasimportmodels
+importmatplotlib.pyplotasplt
+fromkeras.preprocessingimportimage
+fromkeras.preprocessing.imageimportImageDataGenerator
+fromkeras.modelsimportModel
+fromkeras.optimizersimportSGD
+fromkerasimportlayers
+fromkeras.layersimportDense, Flatten, Conv2D, MaxPooling2D
+fromkerasimportInput
+Using TensorFlow backend.
+** A2. Loading the training and testing data and defining the basic parameters **
+ We are resizing the input image to 64 * 64
+ In the dataset : Training Set : 70% Validation Set : 20% Test Set : 10%
+In [2]:
+# Normalize training and validation data in the range of 0 to 1
+train_datagen=ImageDataGenerator(rescale=1./255)
+validation_datagen=ImageDataGenerator(rescale=1./255)
+test_datagen=ImageDataGenerator(rescale=1./255)
+# Read the training sample and set the batch size
+train_generator=train_datagen.flow_from_directory(
+'cellimage/train/',
+target_size=(64, 64),
+batch_size=16,
+class_mode='categorical')
+# Read Validation data from directory and define target size with batch size
+validation_generator=validation_datagen.flow_from_directory(
+'cellimage/val/',
+target_size=(64, 64),
+batch_size=16,
+class_mode='categorical',
+shuffle=False)
+test_generator=test_datagen.flow_from_directory(
+'cellimage/test/',
+target_size=(64, 64),
+batch_size=1,
+class_mode='categorical',
+shuffle=False)
+Found 2217 images belonging to 4 classes.
+Found 635 images belonging to 4 classes.
+Found 319 images belonging to 4 classes.
+ 
+B. Model Building
+ We are going to use 2 convolution layers with 3*3 filer and relu as an activation function
+ Then max pooling layer with 2*2 filter is used
+ After that we are going to use Flatten layer
+ Then Dense layer is used with relu function
+ In the output layer softmax function is used with 4 neurons as we have four class dataset.
+ model.summary() is used to check the overall architecture of the model with number of
+learnable parameters in each
+B1. Model Definition
+In [3]:
+# Create the model
+model=models.Sequential()
+# Add new layers
+model.add(Conv2D(128, kernel_size=(3,3), activation='relu', input_shape=(64,64,3)))
+model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(Conv2D(64, kernel_size=(3,3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(Conv2D(64, kernel_size=(3,3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(layers.Flatten())
+model.add(layers.Dense(32, activation='relu'))
+model.add(layers.Dense(4, activation='softmax'))
+model.summary()
+WARNING:tensorflow:From C:\Users\sozhan\Anaconda2\lib\site-
+packages\tensorflow\python\framework\op_def_library.py:263: colocate_with (from
+tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+WARNING:tensorflow:From C:\Users\sozhan\Anaconda2\lib\site-
+packages\keras\backend\tensorflow_backend.py:1264: calling reduce_prod_v1 (from
+tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future
+version.
+Instructions for updating:
+keep_dimsis deprecated, use keepdims instead
+Layer (type) Output Shape Param #
+=================================================================
+conv2d_1 (Conv2D) (None, 62, 62, 128) 3584
+max_pooling2d_1 (MaxPooling2 (None, 31, 31, 128) 0
+conv2d_2 (Conv2D) (None, 29, 29, 64) 73792
+ 
+max_pooling2d_2 (MaxPooling2 (None, 14, 14, 64) 0
+conv2d_3 (Conv2D) (None, 12, 12, 64) 36928
+max_pooling2d_3 (MaxPooling2 (None, 6, 6, 64) 0
+flatten_1 (Flatten) (None, 2304) 0
+dense_1 (Dense) (None, 32) 73760
+dense_2 (Dense) (None, 4) 132
+=================================================================
+Total params: 188,196
+Trainable params: 188,196
+Non-trainable params: 0
+B2. Compile the model with SGD(Stochastic Gradient Descent) and train it with 10 epochs.
+In [4]:
+sgd=SGD(lr=0.01,decay=1e-6, momentum=0.9, nesterov=True)
+# We are going to use accuracy metrics and cross entropy loss as performance parameters
+model.compile(sgd, loss='categorical_crossentropy', metrics=['acc'])
+# Train the model
+history=model.fit_generator(train_generator,
+steps_per_epoch=train_generator.samples/train_generator.batch_size,
+epochs=10,
+validation_data=validation_generator,
+validation_steps=validation_generator.samples/validation_generator.batch_size,
+verbose=1)
+WARNING:tensorflow:From C:\Users\sozhan\Anaconda2\lib\site-
+packages\keras\backend\tensorflow_backend.py:2885: calling reduce_sum_v1 (from
+tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future
+version.
+Instructions for updating:
+keep_dimsis deprecated, use keepdims instead
+WARNING:tensorflow:From C:\Users\sozhan\Anaconda2\lib\site-
+packages\tensorflow\python\ops\math_ops.py:3066: to_int32 (from
+tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+WARNING:tensorflow:Variable *= will be deprecated. Use `var.assign(var * other)` if you want
+assignment to the variable value or `x = x * y` if you want a new python Tensor object.
+Epoch 1/10
+139/138 [==============================] - 51s 367ms/step - loss: 0.9863 - acc:
+0.6043 - val_loss: 0.6350 - val_acc: 0.7591
+Epoch 2/10
+ 
+/138 [==============================] - 47s 336ms/step - loss: 0.5411 - acc:
+0.7947 - val_loss: 0.4170 - val_acc: 0.8441
+Epoch 3/10
+139/138 [==============================] - 48s 343ms/step - loss: 0.4594 - acc:
+0.8278 - val_loss: 0.6648 - val_acc: 0.7307
+Epoch 4/10
+139/138 [==============================] - 46s 328ms/step - loss: 0.3686 - acc:
+0.8642 - val_loss: 0.3508 - val_acc: 0.8709
+Epoch 5/10
+139/138 [==============================] - 46s 333ms/step - loss: 0.3162 - acc:
+0.8855 - val_loss: 0.3843 - val_acc: 0.8661
+Epoch 6/10
+139/138 [==============================] - 48s 349ms/step - loss: 0.2712 - acc:
+0.9039 - val_loss: 0.3046 - val_acc: 0.8929
+Epoch 7/10
+139/138 [==============================] - 46s 332ms/step - loss: 0.2601 - acc:
+0.9005 - val_loss: 0.2986 - val_acc: 0.9039
+Epoch 8/10
+139/138 [==============================] - 46s 332ms/step - loss: 0.2168 - acc:
+0.9214 - val_loss: 0.3035 - val_acc: 0.8945
+Epoch 9/10
+139/138 [==============================] - 44s 316ms/step - loss: 0.2203 - acc:
+0.9213 - val_loss: 0.2454 - val_acc: 0.9134
+Epoch 10/10
+139/138 [==============================] - 54s 389ms/step - loss: 0.2047 - acc:
+0.9308 - val_loss: 0.2947 - val_acc: 0.9008
+B3. Saving the model
+In [5]:
+model.save('cnn_classification.h5')
+B4. Loading the Model
+In [6]:
+model=models.load_model('cnn_classification.h5')
+print(model)
+<keras.models.Sequential object at 0x0000005BA45C1518>
+B5. Saving weignts of model
+In [7]:
+model.save_weights('cnn_classification.h5')
+B6. Loading the Model weights
+In [8]:
+model.load_weights('cnn_classification.h5')
+ 
+C. Performance Measures
+*Now we are going to plot the accuracy and loss *
+In [9]:
+train_acc=history.history['acc']
+val_acc=history.history['val_acc']
+train_loss=history.history['loss']
+val_loss=history.history['val_loss']
+print(train_acc)
+print(val_acc)
+print(train_loss)
+print(val_loss)
+[0.6062246278755075, 0.7947677041584165, 0.8272440234551195, 0.8637798827244023,
+0.8858818223361341, 0.9039242219484008, 0.9012178620562986, 0.921515561596574,
+0.92106450157871, 0.9305367613892648]
+[0.7590551185795641, 0.8440944886583043, 0.7307086613234572, 0.8708661422016114,
+0.8661417322834646, 0.8929133858267716, 0.9039370078740158, 0.8944881889763779,
+0.9133858267716536, 0.9007874015748032]
+[0.9849027604415818, 0.5411215644190319, 0.4603504691849327, 0.3689646118656171,
+0.3152961805429231, 0.27086145290663827, 0.25899119408323146, 0.21610905267684696,
+0.220770583645578, 0.20524998439873293]
+[0.6350463369230586, 0.4170022392836143, 0.664773770016948, 0.3508223737318685,
+0.38431625602048214, 0.30464723109905645, 0.29862876056920823, 0.3035450204385547,
+0.2454165400482538, 0.29468511782997237]
+In [10]:
+epochs=range(len(train_acc))
+plt.plot(epochs, train_acc, 'b', label='Training Accuracy')
+plt.plot(epochs, val_acc, 'r', label='Validation Accuracy')
+plt.title('Training and Validation Accuracy')
+plt.legend()
+plt.figure()
+plt.show()
+plt.plot(epochs, train_loss, 'b', label='Training Loss')
+plt.plot(epochs, val_loss, 'r', label='Validation Loss')
+plt.title('Training and Validation Loss')
+plt.legend()
+plt.show()
+ 
+<Figure size 432x288 with 0 Axes>
+Model Testing
+In [11]:
+# Get the filenames from the generator
+fnames=test_generator.filenames
+# Get the ground truth from generator
+ 
+ground_truth=test_generator.classes
+# Get the label to class mapping from the generator
+label2index=test_generator.class_indices
+# Getting the mapping from class index to class label
+idx2label=dict((v,k) fork,vinlabel2index.items())
+# Get the predictions from the model using the generator
+predictions=model.predict_generator(test_generator,
+steps=test_generator.samples/test_generator.batch_size,verbose=1)
+predicted_classes=np.argmax(predictions,axis=1)
+errors=np.where(predicted_classes!=ground_truth)[0]
+print("No of errors = {}/{}".format(len(errors),test_generator.samples))
+319/319 [==============================] - 4s 14ms/step
+No of errors = 29/319
+Assignemnt
+*You have to load the weights of previous model and with the help of previous weights try to
+create a CNN model with one more convolution layers. You have to train only after the newly
+added convolution layers of the neural network. *
+Hint : Use model.load_weights('weights.h5', by_name=True)
+In [15]:
+new_model=models.Sequential()
+model.load_weights('cnn_classification.h5', by_name=True)
+new_model.add(Conv2D(128, kernel_size=(3,3), activation='relu', input_shape=(64,64,3)))
+new_model.add(MaxPooling2D(pool_size=(2,2)))
+new_model.add(Conv2D(64, kernel_size=(3,3), activation='relu'))
+new_model.add(MaxPooling2D(pool_size=(2,2)))
+new_model.add(Conv2D(64, kernel_size=(3,3), activation='relu'))
+new_model.add(MaxPooling2D(pool_size=(2,2)))
+new_model.add(Conv2D(32, kernel_size=(3,3), activation='relu'))
+new_model.add(Conv2D(32, kernel_size=(3,3), activation='relu'))
+new_model.add(layers.Flatten())
+new_model.add(layers.Dense(32, activation='relu'))
+new_model.add(layers.Dense(4, activation='softmax'))
+new_model.summary()
+Layer (type) Output Shape Param #
+=================================================================
+conv2d_4 (Conv2D) (None, 62, 62, 128) 3584
+ 
+max_pooling2d_4 (MaxPooling2 (None, 31, 31, 128) 0
+conv2d_5 (Conv2D) (None, 29, 29, 64) 73792
+max_pooling2d_5 (MaxPooling2 (None, 14, 14, 64) 0
+conv2d_6 (Conv2D) (None, 12, 12, 64) 36928
+max_pooling2d_6 (MaxPooling2 (None, 6, 6, 64) 0
+conv2d_7 (Conv2D) (None, 4, 4, 32) 18464
+conv2d_8 (Conv2D) (None, 2, 2, 32) 9248
+flatten_2 (Flatten) (None, 128) 0
+dense_3 (Dense) (None, 32) 4128
+dense_4 (Dense) (None, 4) 132
+=================================================================
+Total params: 146,276
+Trainable params: 146,276
+Non-trainable params: 0
+Training the model after 5rd layer
+In[8]
+forlayerinnew_model.layers[:6]:
+layer.trainable=False
+forlayerinnew_model.layers:
+print(layer, layer.trainable)
+new_model.summary()
+<keras.layers.convolutional.Conv2D object at 0x0000005BA10D8F98> False
+<keras.layers.pooling.MaxPooling2D object at 0x0000005BA2247C18> False
+<keras.layers.convolutional.Conv2D object at 0x0000005BA22ED748> False
+<keras.layers.pooling.MaxPooling2D object at 0x0000005BA45C1160> False
+<keras.layers.convolutional.Conv2D object at 0x0000005BA460E860> False
+<keras.layers.pooling.MaxPooling2D object at 0x0000005BA460EF28> False
+<keras.layers.convolutional.Conv2D object at 0x0000005BA461FF28> True
+<keras.layers.convolutional.Conv2D object at 0x0000005BA4633828> True
+<keras.layers.core.Flatten object at 0x0000005BA46339B0> True
+<keras.layers.core.Dense object at 0x0000005BA9C1A6A0> True
+<keras.layers.core.Dense object at 0x0000005BA9C35B00> True
+Layer (type) Output Shape Param #
+=================================================================
+ 
+conv2d_4 (Conv2D) (None, 62, 62, 128) 3584
+max_pooling2d_4 (MaxPooling2 (None, 31, 31, 128) 0
+conv2d_5 (Conv2D) (None, 29, 29, 64) 73792
+max_pooling2d_5 (MaxPooling2 (None, 14, 14, 64) 0
+conv2d_6 (Conv2D) (None, 12, 12, 64) 36928
+max_pooling2d_6 (MaxPooling2 (None, 6, 6, 64) 0
+conv2d_7 (Conv2D) (None, 4, 4, 32) 18464
+conv2d_8 (Conv2D) (None, 2, 2, 32) 9248
+flatten_2 (Flatten) (None, 128) 0
+dense_3 (Dense) (None, 32) 4128
+dense_4 (Dense) (None, 4) 132
+=================================================================
+Total params: 146,276
+Trainable params: 31,972
+Non-trainable params: 114,304
+In [ ]:
+# Here we are changing the learning rate from 0.001 to 0.01
+sgd=SGD(lr=0.01,decay=1e-6, momentum=0.9, nesterov=True)
+# We are going to use accuracy metrics and cross entropy loss as performance parameters
+new_model.compile(sgd, loss='categorical_crossentropy', metrics=['acc'])
+# Train the model
+new_history=new_model.fit_generator(train_generator,
+steps_per_epoch=train_generator.samples/train_generator.batch_size,
+epochs=2,
+validation_data=validation_generator,
+validation_steps=validation_generator.samples/validation_generator.batch_size,
+verbose=1)
+Epoch 1/2
+139/138 [==============================] - 25s 182ms/step - loss: 1.2130 - acc:
+0.5108 - val_loss: 1.1815 - val_acc: 0.5181
+Epoch 2/2
+139/138 [==============================] - 24s 171ms/step - loss: 1.1256 - acc:
+0.5256 - val_loss: 0.9504 - val_acc: 0.5685
+ 
+C. Performance Measures
+*Now we are going to plot the accuracy and loss *
+In [18]:
+train_acc=new_history.history['acc']
+val_acc=new_history.history['val_acc']
+train_loss=new_history.history['loss']
+val_loss=new_history.history['val_loss']
+In [20]:
+epochs=range(len(train_acc))
+plt.plot(epochs, train_acc, 'b', label='Training Accuracy')
+plt.plot(epochs, val_acc, 'r', label='Validation Accuracy')
+plt.title('Training and Validation Accuracy')
+plt.legend()
+plt.figure()
+plt.show()
+plt.plot(epochs, train_loss, 'b', label='Training Loss')
+plt.plot(epochs, val_loss, 'r', label='Validation Loss')
+plt.title('Training and Validation Loss')
+plt.legend()
+plt.show()
+<Figure size 432x288 with 0 Axes>
+ 
+Model Testing
+In [21]:
+# Get the filenames from the generator
+fnames=test_generator.filenames
+# Get the ground truth from generator
+ground_truth=test_generator.classes
+# Get the label to class mapping from the generator
+label2index=test_generator.class_indices
+# Getting the mapping from class index to class label
+idx2label=dict((v,k) fork,vinlabel2index.items())
+# Get the predictions from the model using the generator
+predictions=model.predict_generator(test_generator,
+steps=test_generator.samples/test_generator.batch_size,verbose=1)
+predicted_classes=np.argmax(predictions,axis=1)
+errors=np.where(predicted_classes!=ground_truth)[0]
+print("No of errors = {}/{}".format(len(errors),test_generator.samples))
+319/319 [==============================] - 4s 12ms/step
+No of errors = 29/319
+
+Output:
+
+
+Result:
+Thus, the python program for build deep learning NN models was executed successfully.
+ 
+ 
+ 
+ 
+ 
+Click on Subject/Paper under Semester to enter.  
+    
+ 
+   
+1st Semester  
+Professional English - 
+I - HS3152  
+Matrices and Calculus 
+- MA3151  
+Engineering Physics  - 
+PH3151  
+Engineering Chemistry 
+- CY3151  
+Problem Solving and 
+Python Programming  - 
+GE3151  
+2nd Semester  
+Professional English 
+- II - HS3252  
+Statistics and 
+Numerical Methods - 
+MA3251  
+Engineering Graphics 
+- GE3251  
+Physics for 
+Information Science 
+- PH3256  
+Basic Electrical and 
+Electronics Engineering 
+- BE3251  
+Programming in C - 
+CS3251  
+3rd Semester  
+Discrete Mathematics 
+- MA3354  
+Digital Principles and 
+Computer Organization 
+- CS3351  
+Foundation of Data 
+Science - CS3352  
+Data Structure - 
+CS3301  
+Object Oriented 
+Programming - CS3391  
+4th Semester  
+Environmental Sciences 
+and Sustainability  - 
+GE3451  
+Theory of Computation 
+- CS3452  
+Artificial Intelligence 
+and Machine Learning 
+- CS3491  
+Database Management 
+System - CS3492  
+Algorithms - CS3401  
+Introduction to 
+Operating Systems - 
+CS3451  
+5th Semester  
+Computer Networks - 
+CS3591  
+Compiler Design - 
+CS3501  
+Cryptography and 
+Cyber Security - 
+CB3491  
+Distributed Computing 
+- CS3551  
+Elective 1  
+Elective 2  
+6th Semester  
+Object Oriented 
+Software Engineering 
+- CCS356  
+Embedded Systems 
+and IoT - CS3691  
+Open Elective -1 
+Elective -3 
+Elective -4 
+Elective -5 
+Elective -6 
+7th Semester  
+Human Values and 
+Ethics  - GE3791  
+Open Elective 2  
+Open Elective 3  
+Open Elective 4  
+Management Elective  
+8th Semester  
+Project Work /  
+ Intership  
+ 
+     
+ All Computer  Engg Subjects -   [ B.E., M.E.,  ] (Click on Subjects to 
+enter) 
+Programming in C Computer Networks  Operating Systems  
+Programming and Data 
+Structures I  Programming and Data 
+Structure II  Problem Solving and Python 
+Programming  
+Database Management Systems  Computer Architecture  Analog and Digital 
+Communication  
+Design and Analysis of 
+Algorithms  Microprocessors and 
+Microcontrollers  Object Oriented Analysis 
+and Design  
+Software Engineering  Discrete Mathematics  Internet Programming  
+Theory of Computation  Computer Graphics  Distributed Systems  
+Mobile Computing  Compiler Design  Digital Signal Processing  
+Artificial Intelligence  Software Testing  Grid and Cloud Computing  
+Data Ware Housing and Data 
+Mining Cryptography and 
+Network Security  Resource Management 
+Techniques  
+Service Oriented Architecture  Embedded and Real Time 
+Systems  Multi - Core Architectures 
+and Programming  
+Probability and Queueing Theory  Physics for Information 
+Science  Transforms and Partial 
+Differential Equ ations 
+Technical English  Engineering Physics  Engineering Chemistry  
+Engineering Graphics  Total Quality 
+Management  Professional Ethics in 
+Engineering  
+Basic Electrical and Electronics 
+and Measurement Engineering  Problem Solvi ng and 
+Python Programming  Environmental Science and 
+Engineering  
+       
+ 
+ 
+ 
+ 
+Click on Subject/Paper under Semester to enter.  
+    
+    
+1st Semester  
+Professional English - 
+I - HS3152  
+Matrices and Calculus 
+- MA3151  
+Engineering Physics  - 
+PH3151  
+Engineering Chemistry 
+- CY3151  
+Problem Solving and 
+Python Programming  - 
+GE3151  
+2nd Semester  
+Professional English 
+- II - HS3252  
+Statistics and 
+Numerical Methods - 
+MA3251  
+Engineering Graphics 
+- GE3251  
+Physics for 
+Electronics Engg - 
+PH3254  
+Basic Electrical & 
+Instru Engg - BE3254  
+Circuit Analysis - 
+EC3251  
+3rd Semester  
+Random Process and 
+Linear Algebra - 
+MA3355  
+C Programming and 
+Data Structures - 
+CS3353  
+Signals and Systems - 
+EC3354  
+Electronic Devices and 
+Circuits - EC3353  
+Control Systems - 
+EC3351  
+Digital Systems Design 
+- EC3352  
+4th Semester  
+Electromagnetic 
+Fields - EC3452  
+Networks and 
+Security - EC3401  
+Linear Integrated 
+Circuits - EC3451  
+Digital Signal 
+Processing - EC3492  
+Communication 
+Systems - EC3491  
+Environmental 
+Sciences and 
+Sustainability - 
+GE3451  
+5th Semester  
+Wireless 
+Communication - 
+EC3501  
+VLSI and Chip Design 
+- EC3552  
+Transmission Lines and 
+RF Systems - EC3551  
+Elective 1  
+Elective 2  
+Elective 3  
+6th Semester  
+Embedded Systems 
+and IOT Design - 
+ET3491  
+Artificial Intelligence 
+and Machine Learning 
+- CS3491  
+Open Elective -1 
+Elective -4 
+Elective -5 
+Elective -6 
+7th Semester  
+Human Values and 
+Ethics  - GE3791  
+Open Elective 2  
+Open Elective 3  
+Open Elective 4  
+8th Semester  
+Project Work /  
+ Intership  
+ 
+     
+ All ECE Engg  Subjects -   [ B.E., M.E.,  ] (Click on Subjects to enter)  
+Circuit Analysis  Digital Electronics  Communication Theory  
+Basic Electrical and 
+Instrumentation Engineering  Electrical Engineering and 
+Instrumentation  Principles of Digital 
+Signal Processing  
+Electronic Devices  Linear Integrated Circuits  Signals and Systems  
+Electronic Circuits I  Electronic Circuits II  Digital Communication  
+Transmission Lines and Wave 
+Guides Control System Engineering  Microprocessors and 
+Microcontrollers  
+Computer Architecture  Computer Networks  Operating Systems  
+RF and Microwave Engineering  Medical Electronics  VLSI Design  
+Optical Communication and 
+Networks  Embedded and Real Time 
+Systems  Cryptography and 
+Network Security  
+Probability and Random 
+Processes  Transforms and Partial 
+Differential Equations  Physics for Electroni cs 
+Engineering  
+Engineering Physics  Engineering Chemistry  Engineering Graphics  
+Problem Solving and Python 
+Programming  Object Oriented Programming 
+and Data Structures  Environmental Science 
+and Engineering  
+Principles of Management  Technical English  Total Quality 
+Management  
+Professional Ethics in 
+Engineering  Engineering Mathematics I  Engineering Mathematics 
+II 
+       
+ 
+ 
+ 
+ 
+ 
+Click on Subject/Paper under Semester to enter.  
+    
+    
+1st Semester  
+Professional English - 
+I - HS3152  
+Matrices and Calculus 
+- MA3151  
+Engineering Physics  - 
+PH3151  
+Engineering Chemistry 
+- CY3151  
+Problem Solving and 
+Python Programming  - 
+GE3151  
+2nd Semester  
+Professional English 
+- II - HS3252  
+Statistics and 
+Numerical Methods - 
+MA3251  
+Engineering Graphics 
+- GE3251  
+Physics for 
+Information Science 
+- PH3256  
+Basic Electrical and 
+Electronics Engineering - 
+BE3251  
+Programming in C - 
+CS3251  
+3rd Semester  
+Discrete Mathematics - 
+MA3354  
+Digital Principles and 
+Computer Organization 
+- CS3351  
+Foundation of Data 
+Science - CS3352  
+Data Structures and 
+Algorithms - CD3291  
+Object Oriented 
+Programming - CS3391  
+4th Semester  
+Environmental Sciences 
+and Sustainability  - 
+GE3451  
+Theory of Computation 
+- CS3452  
+Artificial Intelligence 
+and Machine Learning 
+- CS3491  
+Database Management 
+System - CS3492  
+Web Essentials - 
+IT3401  
+Introduction to 
+Operating Systems - 
+CS3451  
+5th Semester  
+Computer Networks - 
+CS3591  
+Full Stack Web 
+Development - IT3501  
+Distributed Computing 
+- CS3551  
+Embedded Systems and 
+IoT - CS3691  
+Elective 1  
+Elective 2  
+6th Semester  
+Object Oriented 
+Software Engineering - 
+CCS356  
+Open Elective -1 
+Elective -3 
+Elective -4 
+Elective -5 
+Elective -6 
+7th Semester  
+Human Values and 
+Ethics  - GE3791  
+Open Elective 2  
+Open Elective 3  
+Open Elective 4  
+Management Elective  
+8th Semester  
+Project Work /  
+ Intership  
+ 
+     
+ All Computer  Engg Subjects -   [ B.E., M.E.,  ] (Click on Subjects to enter)  
+Programming in C Computer Networks  Operating Systems  
+Programming and Data 
+Structures I  Programming and Data 
+Structure II  Problem Solving and Python 
+Programming  
+Database Management Systems  Computer Architecture  Analog and Digital 
+Communication  
+Design and Analysis of 
+Algorithms  Microprocessors and 
+Microcontrollers  Object Oriented Analysis 
+and Design  
+Software Engineering  Discrete Mathematics  Internet Programming  
+Theory of Computation  Computer Graphics  Distributed Systems  
+Mobile Computing  Compiler Design  Digital Signal Processing  
+Artificial Intelligence  Software Testing  Grid and Cloud Computing  
+Data Ware Housing and Data 
+Mining Cryptography and 
+Network Security  Resource Management 
+Techniques  
+Service Oriented Architecture  Embedded and Real Time 
+Systems  Multi - Core Architectures 
+and Programming  
+Probability and Queueing Theory  Physics for Information 
+Science  Transforms and Partial 
+Differential Equ ations 
+Technical English  Engineering Physics  Engineering Chemistry  
+Engineering Graphics  Total Quality 
+Management  Professional Ethics in 
+Engineering  
+Basic Electrical and Electronics 
+and Measurement Engineering  Problem Solvi ng and 
+Python Programming  Environmental Science and 
+Engineering

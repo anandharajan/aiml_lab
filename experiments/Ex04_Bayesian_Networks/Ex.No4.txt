@@ -1,0 +1,116 @@
+Ex.No:4
+Implement Bayesian Networks
+
+Aim:
+To write a python program to find Bayesian networks
+
+Procedure:
+1. age: age in years
+2. sex: sex (1 = male; 0 = female)
+3. cp: chest pain type
+ Value 1: typical angina
+ Value 2: atypical angina
+ Value 3: non-anginal pain
+ Value 4: asymptomatic
+4. trestbps: resting blood pressure (in mm Hg on admission to the hospital)
+5. chol: serum cholestoral in mg/dl
+6. fbs: (fasting blood sugar > 120 mg/dl) (1 = true; 0 = false)
+7. restecg: resting electrocardiographic results
+ Value 0: normal
+ Value 1: having ST-T wave abnormality (T wave inversions and/or ST elevation
+or depression of > 0.05 mV)
+ Value 2: showing probable or definite left ventricular hypertrophy by Estes'
+criteria
+8. thalach: maximum heart rate achieved
+9. exang: exercise induced angina (1 = yes; 0 = no)
+10. oldpeak = ST depression induced by exercise relative to rest
+11.slope: the slope of the peak exercise ST segment
+ Value 1: upsloping
+ Value 2: flat
+ Value 3: downsloping
+12. ca = number of major vessels (0-3) colored by flourosopy
+13. thal: 3 = normal; 6 = fixed defect; 7 = reversable defect
+14.Heartdisease: It is integer valued from 0 (no presence) to 4. Diagnosis of heart disease
+(angiographic disease status)
+
+Program:
+import pandas as pd
+data=pd.read_csv("heartdisease.csv")
+heart_disease=pd.DataFrame(data)
+print(heart_disease)
+age Gender Family diet Lifestyle cholestrolheartdisease
+0 0 0 1 1 3 0 1
+1 0 1 1 1 3 0 1
+2 1 0 0 0 2 1 1
+3 4 0 1 1 3 2 0
+4 3 1 1 0 0 2 0
+5 2 0 1 1 1 0 1
+6 4 0 1 0 2 0 1
+7 0 0 1 1 3 0 1
+8 3 1 1 0 0 2 0
+9 1 1 0 0 0 2 1
+10 4 1 0 1 2 0 1
+11 4 0 1 1 3 2 0
+12 2 1 0 0 0 0 0
+13 2 0 1 1 1 0 1
+14 3 1 1 0 0 1 0
+15 0 0 1 0 0 2 1
+16 1 1 0 1 2 1 1
+17 3 1 1 1 0 1 0
+18 4 0 1 1 3 2 0
+In [2]:
+frompgmpy.modelsimportBayesianModel
+model=BayesianModel([
+('age','Lifestyle'),
+('Gender','Lifestyle'),
+('Family','heartdisease'),
+('diet','cholestrol'),
+('Lifestyle','diet'),
+('cholestrol','heartdisease'),
+('diet','cholestrol')
+])
+frompgmpy.estimatorsimportMaximumLikelihoodEstimator
+model.fit(heart_disease, estimator=MaximumLikelihoodEstimator)
+frompgmpy.inferenceimportVariableElimination
+HeartDisease_infer=VariableElimination(model)
+In [3]:
+print('For age Enter { SuperSeniorCitizen:0, SeniorCitizen:1, MiddleAged:2, Youth:3, Teen:4 }')
+print('For Gender Enter { Male:0, Female:1 }')
+print('For Family History Enter { yes:1, No:0 }')
+print('For diet Enter { High:0, Medium:1 }')
+ 
+print('For lifeStyle Enter { Athlete:0, Active:1, Moderate:2, Sedentary:3 }')
+print('For cholesterol Enter { High:0, BorderLine:1, Normal:2 }')
+q =HeartDisease_infer.query(variables=['heartdisease'], evidence={
+'age':int(input('Enter age :')),
+'Gender':int(input('Enter Gender :')),
+'Family':int(input('Enter Family history :')),
+'diet':int(input('Enter diet :')),
+'Lifestyle':int(input('Enter Lifestyle :')),
+'cholestrol':int(input('Enter cholestrol :'))
+})
+print(q['heartdisease'])
+
+Output:
+For age Enter { SuperSeniorCitizen:0, SeniorCitizen:1, MiddleAged:2, Youth:3, Teen:4 }
+For Gender Enter { Male:0, Female:1 }
+For Family History Enter { yes:1, No:0 }
+For diet Enter { High:0, Medium:1 }
+For lifeStyle Enter { Athlete:0, Active:1, Moderate:2, Sedentary:3 }
+For cholesterol Enter { High:0, BorderLine:1, Normal:2 }
+Enter age :1
+Enter Gender :1
+Enter Family history :0
+Enter diet :1
+Enter Lifestyle :0
+Enter cholestrol :1
++ + +
+| heartdisease  |  phi(heartdisease) |
++================+=====================+
+| heartdisease_0 | 0.0000 |
++ + +
+| heartdisease_1 | 1.0000 |
++ + +
+
+Result:
+Thus, the Bayesian networks program was executed and output is verified.

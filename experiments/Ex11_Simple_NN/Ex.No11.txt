@@ -1,0 +1,349 @@
+Ex.No:11
+Build Simple Neural Network Models
+
+Aim:
+To write a python program to Build simple neural network models.
+
+Procedure:
+Step 1 - Import basic libraries.
+Step 2 - Importing the dataset.
+Step 3 - Data preprocessing.
+Step 4 - Training the model.
+Step 5 - Testing and evaluation of the model.
+Step 6 - Visualizing the model.
+
+Program:
+Importing libraries
+import warnings
+warnings.filterwarnings('ignore')
+import numpy as np
+import matplotlib.pyplot as plt
+import keras
+from keras.datasets import mnist
+from keras.models import Sequential,model_from_json
+from keras.layers import Dense
+from keras.optimizers import RMSprop
+import pylab as plt
+Using TensorFlow backend.
+Keras is the deep learning library that helps you to code Deep Neural Networks with fewer lines
+of code
+ 
+Import data
+batch_size = 128
+num_classes = 10
+epochs = 2
+# the data, split between train and test sets
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+x_train = x_train.reshape(60000, 784)
+x_test = x_test.reshape(10000, 784)
+x_train = x_train.astype('float32')
+x_test = x_test.astype('float32')
+# Normalize to 0 to 1 range
+x_train /= 255
+x_test /= 255
+print(x_train.shape[0], 'train samples')
+print(x_test.shape[0], 'test samples')
+# convert class vectors to binary class matrices
+y_train = keras.utils.to_categorical(y_train, num_classes)
+y_test = keras.utils.to_categorical(y_test, num_classes)
+Downloading data from 
+11132928/11490434 [============================>.] - ETA: 0s60000 train samples
+10000 test samples
+Visualize Data
+print("Label:",y_test[2:3])
+plt.imshow(x_test[2:3].reshape(28,28), cmap='gray')
+plt.show()
+Note: Images are also considered as numerical matrices
+ 
+Design a model
+first_layer_size = 32
+model = Sequential()
+model.add(Dense(first_layer_size, activation='sigmoid', input_shape=(784,)))
+model.add(Dense(32, activation='sigmoid'))
+model.add(Dense(32, activation='sigmoid'))
+model.add(Dense(num_classes, activation='softmax'))
+model.summary()
+Layer (type) Output Shape Param #
+=================================================================
+dense_1 (Dense) (None, 32) 25120
+dense_2 (Dense) (None, 32) 1056
+dense_3 (Dense) (None, 32) 1056
+dense_4 (Dense) (None, 10) 330
+=================================================================
+Total params: 27,562
+Trainable params: 27,562
+Non-trainable params: 0
+Weights before Training
+w = []
+for layer in model.layers:
+weights = layer.get_weights()
+w.append(weights)
+layer1 = np.array(w[0][0])
+ 
+print("Shape of First Layer",layer1.shape)
+print("Visualization of First Layer")
+fig=plt.figure(figsize=(12, 12))
+columns = 8
+rows = int(first_layer_size/8)
+for i in range(1, columns*rows +1):
+fig.add_subplot(rows, columns, i)
+plt.imshow(layer1[:,i-1].reshape(28,28),cmap='gray')
+plt.show()
+Compiling a Model
+model.compile(loss='categorical_crossentropy',
+optimizer=RMSprop(),
+metrics=['accuracy'])
+Training
+# Write the Training input and output variables, size of the batch, number of epochs
+history = model.fit(x_train,y_train,
+batch_size=batch_size,
+epochs=epochs,
+verbose=1)
+Epoch 1/2
+60000/60000 [==============================] - 7s - loss: 1.5842 - acc: 0.5646
+Epoch 2/2
+60000/60000 [==============================] - 7s - loss: 0.6416 - acc: 0.8247
+Testing
+# Write the testing input and output variables
+score = model.evaluate(x_test, y_test, verbose=0)
+ 
+print('Test loss:', score[0])
+print('Test accuracy:', score[1])
+Test loss: 0.46789013657569883
+Test accuracy: 0.8778
+Weights after Training
+w = []
+for layer in model.layers:
+weights = layer.get_weights()
+w.append(weights)
+layer1 = np.array(w[0][0])
+print("Shape of First Layer",layer1.shape)
+print("Visualization of First Layer")
+fig=plt.figure(figsize=(12, 12))
+columns = 8
+rows = int(first_layer_size/8)
+for i in range(1, columns*rows +1):
+fig.add_subplot(rows, columns, i)
+plt.imshow(layer1[:,i-1].reshape(28,28),cmap='gray')
+plt.show()
+Take away
+This internal representation reflects Latent Variables
+Each of the nodes will look for a specific pattern in the input
+A node will get activated if input is similar to the feature it looks for
+Each node is unique and often orthogonal to each other
+Prediction
+ 
+# Write the index of the test sample to test
+prediction = model.predict(x_test[])
+prediction = prediction[0]
+print('Prediction\n',prediction)
+print('\nThresholded output\n',(prediction>0.5)*1)
+Ground truth
+# Write the index of the test sample to show
+plt.imshow(x_test[].reshape(28,28),cmap='gray')
+plt.show()
+User Input
+# Load library
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+# Load image in color
+image_bgr = cv2.imread('digit.jpg', cv2.IMREAD_COLOR)
+# Convert to RGB
+image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+# Show image
+plt.imshow(image_rgb), plt.axis("off")
+plt.show()
+Convert to grayscale and resize
+# Load image as grayscale
+# Write the path to the image
+ 
+image = cv2.imread('.jpg', cv2.IMREAD_GRAYSCALE)
+image_resized = cv2.resize(image, (28, 28))
+# Show image
+plt.imshow(image_resized, cmap='gray'), plt.axis("off")
+plt.show()
+Prediction
+prediction = model.predict(image_resized.reshape(1,784))
+print('Prediction Score:\n',prediction[0])
+thresholded = (prediction>0.5)*1
+print('\nThresholded Score:\n',thresholded[0])
+print('\nPredicted Digit:\n',np.where(thresholded == 1)[1][0])
+Prediction Score:
+[1.4401099e-05 5.0795502e-03 3.8524144e-03 9.4846159e-01 1.9869357e-04
+3.1823639e-02 1.8906208e-04 1.7704907e-03 6.8866094e-03 1.7235276e-03]
+Thresholded Score:
+[0 0 0 1 0 0 0 0 0 0]
+Predicted Digit:
+3
+Part 2: Saving, Loading and Retraining Models
+Saving a model
+# serialize model to JSON
+model_json = model.to_json()
+ 
+# Write the file name of the model
+with open("model.json", "w") as json_file:
+json_file.write(model_json)
+# serialize weights to HDF5
+# Write the file name of the weights
+model.save_weights("model.h5")
+print("Saved model to disk")
+Saved model to disk
+Loading a model
+# load json and create model
+# Write the file name of the model
+json_file = open('model.json', 'r')
+loaded_model_json = json_file.read()
+json_file.close()
+loaded_model = model_from_json(loaded_model_json)
+# load weights into new model
+# Write the file name of the weights
+loaded_model.load_weights("model.h5")
+print("Loaded model from disk")
+Loaded model from disk
+Retraining a model
+loaded_model.compile(loss='categorical_crossentropy', optimizer=RMSprop(), metrics=['accura
+cy'])
+ 
+history = loaded_model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1)
+score = loaded_model.evaluate(x_test, y_test, verbose=0)
+print('Test loss:', score[0])
+print('Test accuracy:', score[1])
+Epoch 1/2
+60000/60000 [==============================] - 13s - loss: 0.3426 - acc: 0.9081
+Epoch 2/2
+60000/60000 [==============================] - 13s - loss: 0.2633 - acc: 0.9263
+Test loss: 0.23180415102243423
+Test accuracy: 0.9338
+Saving a model and resuming the training later is the great relief in training large neural
+networks !
+Part 3: Activation Functions
+Sigmoid Activation Function
+model = Sequential()
+model.add(Dense(8, activation='sigmoid', input_shape=(784,)))
+model.add(Dense(8, activation='sigmoid'))
+model.add(Dense(num_classes, activation='softmax'))
+model.summary()
+model.compile(loss='categorical_crossentropy',
+optimizer=RMSprop(),
+metrics=['accuracy'])
+history = model.fit(x_train, y_train,
+batch_size=batch_size,
+epochs=epochs,
+verbose=1,
+validation_data=(x_test, y_test))
+ 
+score = model.evaluate(x_test, y_test, verbose=0)
+print('Test loss:', score[0])
+print('Test accuracy:', score[1])
+Layer (type) Output Shape Param #
+=================================================================
+dense_5 (Dense) (None, 8) 6280
+dense_6 (Dense) (None, 8) 72
+dense_7 (Dense) (None, 10) 90
+=================================================================
+Total params: 6,442
+Trainable params: 6,442
+Non-trainable params: 0
+Train on 60000 samples, validate on 10000 samples
+Epoch 1/2
+60000/60000 [==============================] - 8s - loss: 2.0877 - acc: 0.4284 -
+val_loss: 1.8024 - val_acc: 0.6627
+Epoch 2/2
+60000/60000 [==============================] - 7s - loss: 1.5510 - acc: 0.7029 -
+val_loss: 1.3097 - val_acc: 0.7450
+Test loss: 1.30969395942688
+Test accuracy: 0.745
+Relu Activation Function
+ 
+# Write your code here
+# Use the same model design from the above cell
+What are your findings?
+Other Activation Functions
+model.add(Dense(8, activation='tanh'))
+model.add(Dense(8, activation='linear'))
+model.add(Dense(8, activation='hard_sigmoid'))
+Tips
+Relu is commonly used in most hidden layers
+In case of dead neurons, use leaky Relu
+Part 4: Design Choices in Neural Networks
+Design a model with Low Number of Nodes. For Example 8
+first_layer_size = 8
+model = Sequential()
+model.add(Dense(first_layer_size, activation='sigmoid', input_shape=(784,)))
+model.add(Dense(32, activation='sigmoid'))
+model.add(Dense(num_classes, activation='softmax'))
+model.summary()
+model.compile(loss='categorical_crossentropy',
+optimizer=RMSprop(),
+metrics=['accuracy'])
+history = model.fit(x_train, y_train,
+ 
+batch_size=batch_size,
+epochs=epochs,
+verbose=1,
+validation_data=(x_test, y_test))
+score = model.evaluate(x_test, y_test, verbose=0)
+print('Test loss:', score[0])
+print('Test accuracy:', score[1])
+w = []
+for layer in model.layers:
+weights = layer.get_weights()
+w.append(weights)
+layer1 = np.array(w[0][0])
+print("Shape of First Layer",layer1.shape)
+print("Visualization of First Layer")
+import matplotlib.pyplot as plt
+fig=plt.figure(figsize=(16, 16))
+columns = 8
+rows = int(first_layer_size/8)
+for i in range(1, columns*rows +1):
+fig.add_subplot(rows, columns, i)
+plt.imshow(layer1[:,i-1].reshape(28,28),cmap='gray')
+plt.show()
+Design a model with Higher Number of Nodes. For example 128
+# Write your code here
+# Use the same layer design from the above cell
+Lower number of Layers. For example 1 hidden layer
+model = Sequential()
+model.add(Dense(4, activation='relu', input_shape=(784,)))
+model.add(Dense(num_classes, activation='softmax'))
+ 
+model.add(Dense(num_classes, activation='softmax'))
+model.summary()
+model.compile(loss='categorical_crossentropy',
+optimizer=RMSprop(),
+metrics=['accuracy'])
+history = model.fit(x_train, y_train,
+batch_size=batch_size,
+epochs=epochs,
+verbose=1,
+validation_data=(x_test, y_test))
+score = model.evaluate(x_test, y_test, verbose=0)
+print('Test loss:', score[0])
+print('Test accuracy:', score[1])
+Layer (type) Output Shape Param #
+=================================================================
+dense_13 (Dense) (None, 4) 3140
+dense_14 (Dense) (None, 10) 50
+dense_15 (Dense) (None, 10) 110
+=================================================================
+Total params: 3,300
+Trainable params: 3,300
+Non-trainable params: 0
+Train on 60000 samples, validate on 10000 samples
+Epoch 1/2
+60000/60000 [==============================] - 5s - loss: 2.0010 - acc: 0.3352 -
+val_loss: 1.7679 - val_acc: 0.4473
+ 
+Epoch 2/2
+60000/60000 [==============================] - 4s - loss: 1.5709 - acc: 0.5450 -
+val_loss: 1.3916 - val_acc: 0.5919
+Test loss: 1.3915847587585448
+Test accuracy: 0.5919
+
+Output:
+
+
+Result:
+Thus, the python program for simple NN models was executed successfully.

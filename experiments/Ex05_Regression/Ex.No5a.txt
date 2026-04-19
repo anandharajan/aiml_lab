@@ -1,0 +1,84 @@
+Ex.No:5(a)
+Build regression models
+
+Aim:
+To write a python program regression model using linear regression model
+
+Procedure:
+Step 1: Data Pre Processing
+ Importing The Libraries.
+ Importing the Data Set.
+ Encoding the Categorical Data.
+ Avoiding the Dummy Variable Trap.
+ Splitting the Data set into Training Set and Test Set.
+Step 2: Fitting Multiple Linear Regression to the Training set
+Step 3: Predict the Test set results.
+
+Program:
+import pandas as pd
+importnumpyas np
+fromsklearnimportlinear_model
+In [2]:
+df=pd.read_csv('homeprices.csv')
+df
+Out[2]:
+areabedroomsage price
+0 2600 3.0 20 550000
+1 3000 4.0 15 565000
+2 3200 NaN 18 610000
+3 3600 3.0 30 595000
+ 
+area bedrooms age price
+4 4000 5.0 8 760000
+5 4100 6.0 8 810000
+Data Preprocessing: Fill NA values with median value of a column
+In [3]:
+df.bedrooms.median()
+Out[3]:
+4.0
+In [5]:
+df.bedrooms=df.bedrooms.fillna(df.bedrooms.median())
+df
+Out[5]:
+area bedrooms age price
+0 2600 3.0 20 550000
+1 3000 4.0 15 565000
+2 3200 4.0 18 610000
+3 3600 3.0 30 595000
+4 4000 5.0 8 760000
+5 4100 6.0 8 810000
+In [6]:
+reg =linear_model.LinearRegression()
+reg.fit(df.drop('price',axis='columns'),df.price)
+Out[6]:
+LinearRegression(copy_X=True, fit_intercept=True, n_jobs=None,
+ 
+normalize=False)
+In [7]:
+reg.coef_
+Out[7]:
+array([ 112.06244194, 23388.88007794, -3231.71790863])
+In [8]:
+reg.intercept_
+Out[8]:
+221323.00186540408
+Find price of home with 3000 sqr ft area, 3 bedrooms, 40 year old
+In [9]:
+reg.predict([[3000, 3, 40]])
+Out[9]:
+array([498408.25158031])
+In [10]:
+112.06244194*3000 + 23388.88007794*3 +-3231.71790863*40 + 221323.00186540384
+Out[10]:
+498408.25157402386
+Find price of home with 2500 sqr ft area, 4 bedrooms, 5 year old
+In [11]:
+reg.predict([[2500, 4, 5]])
+Out[11]:
+array([578876.03748933])
+
+Output:
+
+
+Result:
+Thus, the python program for regression model was executed successfully.
