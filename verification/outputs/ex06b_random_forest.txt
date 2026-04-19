@@ -1,4 +1,0 @@
-Experiment 6(b): Random Forest
-Test accuracy: 1.0000
-Cross-validation mean accuracy: 1.0000
-Cross-validation scores: [np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(1.0)]

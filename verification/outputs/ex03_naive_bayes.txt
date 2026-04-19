@@ -1,4 +1,0 @@
-Experiment 3: Naive Bayes on PlayTennis
-Dataset rows: 14
-Test accuracy: 1.0000
-Prediction for Sunny/Cool/High/Strong: No

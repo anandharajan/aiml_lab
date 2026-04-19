@@ -1,4 +1,0 @@
-Experiment 11: Simple Neural Network on Handwritten Digits
-Test accuracy: 0.9611
-Prediction for digit.jpg: 3
-Prediction confidence: 0.9943

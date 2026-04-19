@@ -1,5 +1,0 @@
-Experiment 5(a): Linear Regression
-Coefficients: [112.0624, 23388.8801, -3231.7179]
-Intercept: 221323.0019
-Predicted price for [3000, 3, 40]: 498408.25
-Predicted price for [2500, 4, 5]: 578876.04

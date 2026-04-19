@@ -1,4 +1,0 @@
-Experiment 8: K-Means and GMM on Iris
-KMeans inertia: 78.8514
-KMeans adjusted rand index: 0.7302
-GMM adjusted rand index: 0.5165

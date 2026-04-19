@@ -1,3 +1,0 @@
-Experiment 2(b): AO* Search
-Solution graph 1: {'I': [], 'G': ['I'], 'B': ['G'], 'J': [], 'C': ['J'], 'A': ['B', 'C']}
-Solution graph 2: {'E': [], 'F': [], 'D': ['E', 'F'], 'A': ['D']}
