@@ -1,0 +1,6 @@
+Experiment 5(b): Logistic Regression
+Test accuracy: 0.8333
+P(buy insurance | age=35): 0.5773
+P(buy insurance | age=43): 0.6806
+Coefficient: 0.0556
+Intercept: -1.6331

@@ -1,10 +1,8 @@
-pandas
 numpy
+pandas
 matplotlib
 scikit-learn
-seaborn
-pgmpy
-tensorflow
-keras
 opencv-python
 pillow
+torch
+torchvision

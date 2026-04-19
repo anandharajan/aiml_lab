@@ -1,0 +1,6 @@
+Experiment 1(a): Breadth First Search
+Start: A
+Goal: H
+Expansion order: A -> B -> S -> C -> G -> D -> E -> F -> H
+Path: A => S => G => H
+Path length: 3

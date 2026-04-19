@@ -1,0 +1,5 @@
+Experiment 4: Bayesian Network Inference
+Evidence: {'age': 1, 'Gender': 1, 'Family': 0, 'diet': 1, 'Lifestyle': 0, 'cholestrol': 1}
+Posterior distribution for heartdisease:
+  heartdisease=0: 0.2500
+  heartdisease=1: 0.7500

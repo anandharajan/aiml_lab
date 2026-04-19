@@ -1,0 +1,4 @@
+Experiment 9: K-Means Clustering on Income
+Cluster centers: [[0.7227, 0.8974], [0.1373, 0.1163], [0.8529, 0.2023]]
+Cluster counts: {0: 7, 1: 9, 2: 6}
+Elbow SSE: [5.434, 2.0911, 0.4751, 0.3491, 0.2818, 0.224, 0.1686, 0.1327, 0.1038]

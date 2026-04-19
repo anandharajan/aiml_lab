@@ -1,0 +1,6 @@
+Experiment 1(b): Depth First Search
+Start: A
+Goal: H
+Expansion order: A -> B -> S -> C -> D -> E -> H
+Path: A => S => C => E => H
+Path length: 4

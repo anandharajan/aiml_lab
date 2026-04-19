@@ -1,0 +1,3 @@
+Experiment 2(a): A* Search
+Path found: A -> F -> G -> I -> J
+Total cost: 10

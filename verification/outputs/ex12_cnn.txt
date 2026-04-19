@@ -1,0 +1,11 @@
+Epoch 01: train_loss=1.2855, val_accuracy=0.7500
+Epoch 02: train_loss=0.8323, val_accuracy=1.0000
+Epoch 03: train_loss=0.3141, val_accuracy=1.0000
+Epoch 04: train_loss=0.0553, val_accuracy=1.0000
+Epoch 05: train_loss=0.0051, val_accuracy=1.0000
+Epoch 06: train_loss=0.0008, val_accuracy=1.0000
+Epoch 07: train_loss=0.0002, val_accuracy=1.0000
+Epoch 08: train_loss=0.0001, val_accuracy=1.0000
+Experiment 12: CNN on Cell Image Dataset
+Classes: ['class_0', 'class_1', 'class_2', 'class_3']
+Test accuracy: 1.0000
